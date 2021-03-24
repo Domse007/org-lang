@@ -46,7 +46,7 @@ This is my personal configuration:
 	   :fetcher github)
   :custom ((org-lang-fallback-lang "de_CH")
 	   (org-lang-installed-langs
-	    '("de_CH", "de_DE", "fr_CH", "en_US"))
+	    '("de_CH" "de_DE" "fr_CH" "en_US"))
 	   (org-lang-prefered-completion 'ivy))
   :hook ((org-mode-hook . org-lang-mode)
 	 (org-mode-hook . org-lang-get-buffer-lang)))

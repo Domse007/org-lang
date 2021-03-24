@@ -49,8 +49,7 @@
 (define-minor-mode org-lang-mode
   "Autmatic and easy switching of languages"
   :global nil
-  :keymap '(((kbd "C-c l") . org-lang-selector))
-  :after-hook '((org-mode-hook . org-lang-get-buffer-lang))
+  :keymap '(([?\C-c ?l] . org-lang-selector))
   :lighter " org-lang")
 
 (defun org-lang-get-buffer-lang ()
