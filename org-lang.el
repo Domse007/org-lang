@@ -49,7 +49,7 @@
 (define-minor-mode org-lang-mode
   "Autmatic and easy switching of languages"
   :global nil
-  :keymap '(([?\C-c ?\l] . org-lang-selector))
+  :keymap '(((kbd "C-c l") . org-lang-selector))
   :after-hook '((org-mode-hook . org-lang-get-buffer-lang))
   :lighter " org-lang")
 
@@ -74,32 +74,29 @@
 (defun org-lang-selector ()
   "Interacitvely select a language with an interactive menu"
   (interactive)
-  (let ((org-lang-default-string "")
-	(org-lang-user-result ""))
-    (progn (dolist (i org-lang-installed-langs org-lang-default-string)
-	     (setq org-lang-default-string (concat org-lang-default-string
-						   "["
-						   i
-						   (if (equal (length i) 1)
-						       "]: "
-						     "], "))))
-	   (cond ((equal org-lang-prefered-completion 'default)
-		  (progn (setq org-lang-user-result
-			       (read-string org-lang-default-string))
-			 (if (member org-lang-user-result org-lang-installed-langs)
-			     (ispell-change-dictionary org-lang-user-result)
-			   (message "Requested language not listed as installed."))))
-		 ((equal org-lang-prefered-completion 'ivy)
-		  ;; Docs: https://oremacs.com/swiper/#required-arguments-for-ivy-read"
-		  (ivy-read "Select Language: "
-			    org-lang-installed-langs
-			    :preselect (ivy-thing-at-point)
-			    :require-match t
-			    :action (lambda (selected)
-				      (ispell-change-dictionary selected))))
-		 (t
-		  (message "%s is not implemented"
-			  (symbol-name org-lang-prefered-completion)))))))
+  (let ((org-lang-user-result ""))
+    (cond ((equal org-lang-prefered-completion 'default)
+	   (progn (setq org-lang-user-result
+			(read-string
+			 (concat "["
+				 (mapconcat 'identity
+					    org-lang-installed-langs
+					    "], [")
+				 "]: ")))
+		  (if (member org-lang-user-result org-lang-installed-langs)
+		      (ispell-change-dictionary org-lang-user-result)
+		    (message "Requested language not listed as installed."))))
+	  ((equal org-lang-prefered-completion 'ivy)
+	   ;; Docs: https://oremacs.com/swiper/#required-arguments-for-ivy-read"
+	   (ivy-read "Select Language: "
+		     org-lang-installed-langs
+		     :preselect (ivy-thing-at-point)
+		     :require-match t
+		     :action (lambda (selected)
+			       (ispell-change-dictionary selected))))
+	  (t
+	   (message "%s is not implemented"
+		    (symbol-name org-lang-prefered-completion))))))
 
 (provide 'org-lang)
 ;;; org-lang.el ends here
