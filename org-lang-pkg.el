@@ -1,0 +1,5 @@
+(define-package "org-lang" "20220323.1914" "Package to detect language in org-mode" '((emacs "27.1"))
+  :author '(("Dominik Keller" . "user@user.com"))
+  :maintainer '(("Dominik Keller" . "user@user.com"))
+  :keywords '("Convenience")
+  :url "https://www.github.com/domse007/org-lang")

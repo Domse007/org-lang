@@ -1,0 +1,66 @@
+#+TITLE: org-lang
+#+AUTHOR: Dominik Keller
+#+OPTIONS: toc:t date:nil title:t author:t num:t \n:t
+#+EXPORT_FILE_NAME:
+#+LATEX_CLASS: article
+#+LANGUAGE: en_US
+#+LATEX_HEADER: \usepackage[AUTO]{babel}
+#+LATEX: \setlength\parindent{0pt}
+
+* Overview
+This package implements an easy way to automate the switching of
+dictionaries in org-mode. And if it doesn't work automatically or you
+have to change it in the same buffer, =org-lang= provides a simple
+interface with optional =ivy=-interface to change the dictionary by
+hand. 
+
+* Features
+- automatic recognition of languages by the =#+LANGUAGE:= tag
+- interacitve menu with integration for =ivy=
+
+* Requirements
+This package is just a simplification and automation for =ispell=. You
+have to make sure that you have configured =ispell= and optionally
+=flyspell=.
+
+Also you have to have an installed spell checker. I have tested it
+with =aspell=. Also may have to install the dictionaries on your own.
+
+* Installation
+=Org-lang= is looking for the =#+LANGUAGE:= string in the buffer. The
+symbol that follows this string is then given to =ispell=. But first it
+checks if it is in the list of specified languages.
+
+Please make sure that you have set =ispell-program-name= to the
+installed spell checker.
+
+The interactive selection menu (=org-lang-selector=) is per default
+bound to =C-c l=.
+
+This is my personal configuration:
+#+begin_src emacs-lisp
+(use-package org-lang
+  :ensure t
+  :quelpa (org-lang
+	   :repo domse007/org-lang
+	   :fetcher github)
+  :custom ((org-lang-fallback-lang "de_CH")
+	   (org-lang-installed-langs
+	    '("de_CH", "de_DE", "fr_CH", "en_US"))
+	   (org-lang-prefered-completion 'ivy))
+  :hook ((org-mode-hook . org-lang-mode)
+	 (org-mode-hook . org-lang-get-buffer-lang)))
+#+end_src
+It is not on =melpa=, so you have to install it with =git= or use =quelpa=.
+
+The following variables can be customized.
+- =org-lang-fallback-lang=: It takes a String with the language that the
+  is used, if =org-lang= couldn't automatically detect a language.
+- =org-lang-installed-langs=: It takes a list with the languages you
+  wish to use.
+- =org-lang-prefered-completion=: It takes a symbol with the name of the
+  your preferred completion frontend. Currently ='default= for use
+  without any completion frontend and ='ivy= are supported.
+
+* License
+GPLv3
