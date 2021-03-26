@@ -26,7 +26,7 @@
 
 ;;; Code:
 
-(require 'fuzzy-match)
+(require 'fuzzy)
 
 (defgroup org-lang nil
   "Simplify multilingual workflow for org-mode"
@@ -71,7 +71,7 @@
       (if (not (equal org-lang-str-pos 0))
 	  (progn (setq org-lang-lang (thing-at-point 'symbol))
 		 (setq org-lang-FM-candidates
-		       (FM-all-close-matches org-lang-lang org-lang-installed-langs))
+		       (fuzzy-all-completions org-lang-lang org-lang-installed-langs))
 		 (if (not (equal org-lang-FM-candidates '()))
 		     (progn (ispell-change-dictionary (nth 0 org-lang-FM-candidates))
 			    (message "Language detected. Changing to %s"
