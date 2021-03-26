@@ -26,6 +26,8 @@
 
 ;;; Code:
 
+(require 'fuzzy-match)
+
 (defgroup org-lang nil
   "Simplify multilingual workflow for org-mode"
   :prefix "org-lang-"
@@ -46,6 +48,11 @@
   :type 'symbol
   :group 'org-lang)
 
+(defcustom org-lang-check-after-enable nil
+  "Check buffer for spelling mistakes after enabling."
+  :type 'boolean
+  :group 'org-lang)
+
 (define-minor-mode org-lang-mode
   "Autmatic and easy switching of languages"
   :global nil
@@ -56,15 +63,19 @@
   "Search the current org-mode buffer for a usable language."
   (interactive)
   (let ((org-lang-str-pos 0)
-	(org-lang-lang ""))
+	(org-lang-lang "")
+	(org-lang-FM-candidates '()))
     (save-excursion
       (goto-char 1)
       (setq org-lang-str-pos (search-forward "#+LANGUAGE: " nil t))
       (if (not (equal org-lang-str-pos 0))
 	  (progn (setq org-lang-lang (thing-at-point 'symbol))
-		 (if (member org-lang-lang org-lang-installed-langs)
-		     (progn (ispell-change-dictionary org-lang-lang)
-			    (message "Language detected. Changing to %s" org-lang-lang))
+		 (setq org-lang-FM-candidates
+		       (FM-all-close-matches org-lang-lang org-lang-installed-langs))
+		 (if (not (equal org-lang-FM-candidates '()))
+		     (progn (ispell-change-dictionary (nth 0 org-lang-FM-candidates))
+			    (message "Language detected. Changing to %s"
+				     (nth 0 org-lang-FM-candidates)))
 		   (progn (ispell-change-dictionary org-lang-fallback-lang)
 			  (message "Couldn't detect any language. Using fallback option."))))
 	(progn (message "Couldn't detect any language. Using fallback option.")
@@ -83,16 +94,20 @@
 					    "], [")
 				 "]: ")))
 		  (if (member org-lang-user-result org-lang-installed-langs)
-		      (ispell-change-dictionary org-lang-user-result)
+		      (progn (ispell-change-dictionary org-lang-user-result)
+			     (when org-lang-check-after-enable
+			       (flyspell-buffer)))
 		    (message "Requested language not listed as installed."))))
 	  ((equal org-lang-prefered-completion 'ivy)
 	   ;; Docs: https://oremacs.com/swiper/#required-arguments-for-ivy-read"
-	   (ivy-read "Select Language: "
-		     org-lang-installed-langs
-		     :preselect (ivy-thing-at-point)
-		     :require-match t
-		     :action (lambda (selected)
-			       (ispell-change-dictionary selected))))
+	   (progn (ivy-read "Select Language: "
+			    org-lang-installed-langs
+			    :preselect (ivy-thing-at-point)
+			    :require-match t
+			    :action (lambda (selected)
+				      (ispell-change-dictionary selected)))
+		  (when org-lang-check-after-enable
+		    (flyspell-buffer))))
 	  (t
 	   (message "%s is not implemented"
 		    (symbol-name org-lang-prefered-completion))))))
