@@ -56,12 +56,10 @@
   "Search the current org-mode buffer for a usable language."
   (interactive)
   (let ((org-lang-str-pos 0)
-	(org-lang-lang "")
-	(standard-output 'ignore))
+	(org-lang-lang ""))
     (save-excursion
       (goto-char 1)
-      (setq org-lang-str-pos (search-forward "#+LANGUAGE: "))
-      (setq standard-output t)
+      (setq org-lang-str-pos (search-forward "#+LANGUAGE: " nil t))
       (if (not (equal org-lang-str-pos 0))
 	  (progn (setq org-lang-lang (thing-at-point 'symbol))
 		 (if (member org-lang-lang org-lang-installed-langs)
