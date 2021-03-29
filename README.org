@@ -47,20 +47,25 @@ This is my personal configuration:
   :custom ((org-lang-fallback-lang "de_CH")
 	   (org-lang-installed-langs
 	    '("de_CH" "de_DE" "fr_CH" "en_US"))
-	   (org-lang-prefered-completion 'ivy))
-  :hook ((org-mode-hook . org-lang-mode)
-	 (org-mode-hook . org-lang-get-buffer-lang)))
+	   (org-lang-prefered-completion 'ivy)
+	   (org-lang-check-after-enable t))
+  :hook ((org-mode . org-lang-mode)
+	 (org-mode . org-lang-get-buffer-lang)))
 #+end_src
 It is not on =melpa=, so you have to install it with =git= or use =quelpa=.
 
 The following variables can be customized.
 - =org-lang-fallback-lang=: It takes a String with the language that the
-  is used, if =org-lang= couldn't automatically detect a language.
+  is used, if =org-lang= couldn't automatically detect a language. The
+  reported string from the buffer and a string from the
+  =org-lang-installed-langs= don't have to match exactly.
 - =org-lang-installed-langs=: It takes a list with the languages you
   wish to use.
 - =org-lang-prefered-completion=: It takes a symbol with the name of the
   your preferred completion frontend. Currently ='default= for use
   without any completion frontend and ='ivy= are supported.
+- =org-lang-check-after-enable=: It takes a boolean value. If =t=, it
+  calls =flyspell-buffer= after calling =ispell-change-dictionary=.
 
 * License
 GPLv3
