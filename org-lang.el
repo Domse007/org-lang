@@ -108,6 +108,12 @@
 				      (ispell-change-dictionary selected)))
 		  (when org-lang-check-after-enable
 		    (flyspell-buffer))))
+	  ((equal org-lang-prefered-completion 'helm)
+	   (ispell-change-dictionary
+	    (helm :sources (helm-build-sync-source "snipsearch"
+			     :candidates org-lang-installed-langs
+			     :fuzzy-match t)
+		  :buffer "*org-lang*")))
 	  (t
 	   (message "%s is not implemented"
 		    (symbol-name org-lang-prefered-completion))))))

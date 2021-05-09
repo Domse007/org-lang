@@ -11,12 +11,12 @@
 This package implements an easy way to automate the switching of
 dictionaries in org-mode. And if it doesn't work automatically or you
 have to change it in the same buffer, =org-lang= provides a simple
-interface with optional =ivy=-interface to change the dictionary by
-hand. 
+interface with optional =ivy=- and =helm=-interface to change the
+dictionary by hand.
 
 * Features
 - automatic recognition of languages by the =#+LANGUAGE:= tag
-- interacitve menu with integration for =ivy=
+- interacitve menu with integration for =ivy= and =helm=
 
 * Requirements
 This package is just a simplification and automation for =ispell=. You
@@ -47,7 +47,7 @@ This is my personal configuration:
   :custom ((org-lang-fallback-lang "de_CH")
 	   (org-lang-installed-langs
 	    '("de_CH" "de_DE" "fr_CH" "en_US"))
-	   (org-lang-prefered-completion 'ivy)
+	   (org-lang-prefered-completion 'helm)
 	   (org-lang-check-after-enable t))
   :hook ((org-mode . org-lang-mode)
 	 (org-mode . org-lang-get-buffer-lang)))
@@ -63,7 +63,7 @@ The following variables can be customized.
   wish to use.
 - =org-lang-prefered-completion=: It takes a symbol with the name of the
   your preferred completion frontend. Currently ='default= for use
-  without any completion frontend and ='ivy= are supported.
+  without any completion frontend, ='ivy= and ='helm= are supported.
 - =org-lang-check-after-enable=: It takes a boolean value. If =t=, it
   calls =flyspell-buffer= after calling =ispell-change-dictionary=.
 
