@@ -110,7 +110,7 @@
 		    (flyspell-buffer))))
 	  ((equal org-lang-prefered-completion 'helm)
 	   (ispell-change-dictionary
-	    (helm :sources (helm-build-sync-source "snipsearch"
+	    (helm :sources (helm-build-sync-source "org-lang"
 			     :candidates org-lang-installed-langs
 			     :fuzzy-match t)
 		  :buffer "*org-lang*")))
