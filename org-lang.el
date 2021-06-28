@@ -46,6 +46,7 @@
 (defcustom org-lang-prefered-completion 'default
   "Symbol with prefered completion framework"
   :type 'symbol
+  :options '('default 'helm 'ivy)
   :group 'org-lang)
 
 (defcustom org-lang-check-after-enable nil
@@ -58,6 +59,12 @@
   :global nil
   :keymap '(([?\C-c ?l] . org-lang-selector))
   :lighter " org-lang")
+
+(when (equal snipsearch-comp-interface 'helm)
+  (require 'helm))
+
+(when (equal snipsearch-comp-interface 'ivy)
+  (require 'ivy))
 
 (defun org-lang-get-buffer-lang ()
   "Search the current org-mode buffer for a usable language."
