@@ -43,12 +43,6 @@
   :type 'list
   :group 'org-lang)
 
-(defcustom org-lang-prefered-completion 'default
-  "Symbol with prefered completion framework"
-  :type 'symbol
-  :options '('default 'helm 'ivy)
-  :group 'org-lang)
-
 (defcustom org-lang-check-after-enable nil
   "Check buffer for spelling mistakes after enabling."
   :type 'boolean
@@ -60,11 +54,8 @@
   :keymap '(([?\C-c ?l] . org-lang-selector))
   :lighter " org-lang")
 
-(when (equal snipsearch-comp-interface 'helm)
-  (require 'helm))
 
-(when (equal snipsearch-comp-interface 'ivy)
-  (require 'ivy))
+(require 'helm)
 
 (defun org-lang-get-buffer-lang ()
   "Search the current org-mode buffer for a usable language."
@@ -92,38 +83,11 @@
   "Interacitvely select a language with an interactive menu"
   (interactive)
   (let ((org-lang-user-result ""))
-    (cond ((equal org-lang-prefered-completion 'default)
-	   (progn (setq org-lang-user-result
-			(read-string
-			 (concat "["
-				 (mapconcat 'identity
-					    org-lang-installed-langs
-					    "], [")
-				 "]: ")))
-		  (if (member org-lang-user-result org-lang-installed-langs)
-		      (progn (ispell-change-dictionary org-lang-user-result)
-			     (when org-lang-check-after-enable
-			       (flyspell-buffer)))
-		    (message "Requested language not listed as installed."))))
-	  ((equal org-lang-prefered-completion 'ivy)
-	   ;; Docs: https://oremacs.com/swiper/#required-arguments-for-ivy-read"
-	   (progn (ivy-read "Select Language: "
-			    org-lang-installed-langs
-			    :preselect (ivy-thing-at-point)
-			    :require-match t
-			    :action (lambda (selected)
-				      (ispell-change-dictionary selected)))
-		  (when org-lang-check-after-enable
-		    (flyspell-buffer))))
-	  ((equal org-lang-prefered-completion 'helm)
-	   (ispell-change-dictionary
-	    (helm :sources (helm-build-sync-source "org-lang"
-			     :candidates org-lang-installed-langs
-			     :fuzzy-match t)
-		  :buffer "*org-lang*")))
-	  (t
-	   (message "%s is not implemented"
-		    (symbol-name org-lang-prefered-completion))))))
+    (ispell-change-dictionary
+     (helm :sources (helm-build-sync-source "org-lang"
+		      :candidates org-lang-installed-langs
+		      :fuzzy-match t)
+	   :buffer "*org-lang*"))))
 
 (provide 'org-lang)
 ;;; org-lang.el ends here
